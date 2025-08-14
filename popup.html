@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bluesky Scheduler</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="icon-128.svg" alt="logo" class="logo">
+            <h1>Bluesky Scheduler</h1>
+        </header>
+
+        <section id="auth-section" class="card">
+            <h2>Autenticação</h2>
+            <label>
+                Handle ou e-mail
+                <input id="identifier" type="text" placeholder="seunome.bsky.social ou e-mail">
+            </label>
+            <label>
+                App Password
+                <input id="password" type="password" placeholder="senha do app">
+            </label>
+            <button id="login-btn" class="primary">Entrar</button>
+            <p class="hint">Use uma App Password criada em Configurações do Bluesky (não use sua senha principal).</p>
+        </section>
+
+        <section id="composer-section" class="card hidden">
+            <h2>Novo post</h2>
+            <textarea id="post-text" rows="4" placeholder="Escreva seu post..."></textarea>
+
+            <div class="media-uploader">
+                <input id="media-input" type="file" accept="image/*,video/*" multiple>
+                <div id="media-preview" class="media-preview"></div>
+            </div>
+
+            <div id="alt-editor" class="alt-editor"></div>
+
+            <div class="schedule">
+                <label>Data
+                    <input id="date" type="date">
+                </label>
+                <label>Horários
+                    <div class="time-picker">
+                        <div class="time-buttons" id="time-buttons">
+                            <button type="button" class="time-btn" data-time="06:00">06:00</button>
+                            <button type="button" class="time-btn" data-time="08:00">08:00</button>
+                            <button type="button" class="time-btn" data-time="09:00">09:00</button>
+                            <button type="button" class="time-btn" data-time="12:00">12:00</button>
+                            <button type="button" class="time-btn" data-time="15:00">15:00</button>
+                            <button type="button" class="time-btn" data-time="18:00">18:00</button>
+                            <button type="button" class="time-btn" data-time="20:00">20:00</button>
+                            <button type="button" class="time-btn" data-time="22:00">22:00</button>
+                        </div>
+                        <input id="times" type="text" placeholder="Digite horários: 09:00, 12:30, 18:45 ou clique nos botões acima">
+                    </div>
+                </label>
+            </div>
+
+            <div class="actions">
+                <button id="schedule-btn" class="primary">Agendar</button>
+                <button id="post-now-btn" class="secondary">Postar agora</button>
+            </div>
+            <div id="composer-msg" class="msg"></div>
+        </section>
+
+        <section id="queue-section" class="card hidden">
+            <h2>Fila</h2>
+            <ul id="queue-list" class="queue-list"></ul>
+            <div class="debug-actions">
+                <button id="test-alarm-btn" class="secondary small">Teste (30s)</button>
+                <button id="test-schedule-btn" class="secondary small">Teste agenda</button>
+                <button id="debug-btn" class="secondary small">Debug</button>
+                <button id="clear-alarms-btn" class="secondary small">Limpar tudo</button>
+            </div>
+        </section>
+
+        <section id="logs-section" class="card hidden">
+            <h2>Logs (últimos 10)</h2>
+            <div id="logs-container" class="logs-container"></div>
+            <button id="clear-logs-btn" class="secondary small">Limpar logs</button>
+        </section>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configurações - Bluesky Scheduler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Configurações</h1>
+    </header>
+    <section class="card">
+      <h2>Preferências</h2>
+      <label>
+        Serviço do Bluesky
+        <input id="service-url" type="text" placeholder="https://bsky.social">
+      </label>
+      <label>
+        Notificações de postagem
+        <input id="notify" type="checkbox"> Ativar
+      </label>
+      <div class="actions">
+        <button id="save-options" class="primary">Salvar</button>
+      </div>
+      <div id="options-msg" class="msg"></div>
+    </section>
+  </div>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

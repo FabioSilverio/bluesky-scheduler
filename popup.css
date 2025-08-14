@@ -1,0 +1,125 @@
+:root {
+  --bg: #0b1020;
+  --card: #121933;
+  --text: #e6e9f2;
+  --muted: #9aa3b2;
+  --primary: #0ea5e9;
+  --primary-700: #0284c7;
+  --success: #10b981;
+  --danger: #ef4444;
+  --border: #263159;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  width: 360px;
+  min-height: 560px;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: linear-gradient(180deg, #0b1020 0%, #0d1224 100%);
+  color: var(--text);
+}
+
+.container { padding: 16px; }
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.logo { width: 28px; height: 28px; border-radius: 8px; }
+h1 { font-size: 18px; margin: 0; }
+h2 { font-size: 14px; margin: 0 0 8px 0; color: var(--muted); font-weight: 600; letter-spacing: .3px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  margin-bottom: 12px;
+}
+
+label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+input[type="text"], input[type="password"], input[type="date"], textarea {
+  width: 100%;
+  background: #0e1430;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+textarea { resize: vertical; }
+
+.primary, .secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+.primary { background: var(--primary); color: #06111a; }
+.primary:hover { background: var(--primary-700); }
+.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+
+.hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.hidden { display: none; }
+
+.media-uploader { margin-top: 8px; margin-bottom: 8px; }
+.media-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.media-item { position: relative; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-item .alt-input { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); padding: 6px; }
+.media-item .alt-input input { width: 100%; font-size: 11px; padding: 6px 8px; border-radius: 8px; }
+
+.alt-editor { display: grid; gap: 6px; margin-top: 6px; }
+.alt-editor .alt-row { display: grid; grid-template-columns: 1fr; gap: 4px; }
+.alt-editor .alt-row input { width: 100%; }
+
+.schedule { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
+
+.time-picker { display: grid; gap: 8px; }
+.time-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.time-btn {
+  padding: 8px 6px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.time-btn:hover { background: rgba(14, 165, 233, 0.1); color: var(--primary); }
+.time-btn.selected { background: var(--primary); color: #06111a; border-color: var(--primary); }
+.actions { display: flex; gap: 8px; margin-top: 8px; }
+.msg { margin-top: 8px; font-size: 12px; color: var(--muted); min-height: 18px; }
+
+.queue-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.queue-item { display: grid; gap: 6px; border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+.queue-item .when { font-size: 12px; color: var(--muted); }
+.queue-item .text { font-size: 13px; }
+
+.debug-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+.small { padding: 6px 8px; font-size: 11px; }
+
+.logs-container { 
+  max-height: 200px; 
+  overflow-y: auto; 
+  background: #0a0f1a; 
+  border: 1px solid var(--border); 
+  border-radius: 8px; 
+  padding: 8px; 
+  margin-bottom: 8px;
+  font-family: monospace; 
+  font-size: 11px; 
+}
+.log-entry { 
+  margin-bottom: 4px; 
+  padding: 2px 4px; 
+  border-radius: 4px; 
+}
+.log-info { color: #60a5fa; }
+.log-success { color: #34d399; }
+.log-error { color: #f87171; }
+.log-warning { color: #fbbf24; }

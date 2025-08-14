@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Bluesky Scheduler",
+  "version": "0.1.0",
+  "description": "Agende postagens de texto, imagem e vídeo no Bluesky com textos alternativos (ALT).",
+  "icons": {
+    "128": "icon-128.svg"
+  },
+  "action": {
+    "default_title": "Bluesky Scheduler",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icon-128.svg"
+    }
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://bsky.social/*",
+    "https://*.bsky.social/*"
+  ]
+}
