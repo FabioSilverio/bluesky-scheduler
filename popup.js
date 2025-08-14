@@ -10,6 +10,7 @@ const loginBtn = document.getElementById('login-btn');
 
 const postText = document.getElementById('post-text');
 const mediaInput = document.getElementById('media-input');
+const videoInput = document.getElementById('video-input');
 const mediaPreview = document.getElementById('media-preview');
 const altEditor = document.getElementById('alt-editor');
 const dateInput = document.getElementById('date');
@@ -87,6 +88,8 @@ mediaInput.addEventListener('change', () => {
   mediaPreview.innerHTML = '';
   altEditor.innerHTML = '';
   const files = Array.from(mediaInput.files || []);
+  const MAX_IMAGE_BYTES = 1.5 * 1024 * 1024; // 1.5MB
+  const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB
   files.slice(0, 4).forEach((file, index) => {
     const url = URL.createObjectURL(file);
     const isVideo = file.type.startsWith('video/');
@@ -95,23 +98,52 @@ mediaInput.addEventListener('change', () => {
     wrapper.innerHTML = isVideo ? `<video src="${url}" muted playsinline></video>` : `<img src="${url}" alt="preview">`;
     mediaPreview.appendChild(wrapper);
 
+    const limit = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+    if (file.size > limit) {
+      wrapper.classList.add('invalid');
+      const warn = document.createElement('div');
+      warn.className = 'reject-msg';
+      warn.textContent = `Arquivo muito grande (${Math.round(file.size/1024/1024)}MB). Máximo ${isVideo ? '50MB (vídeo)' : '1.5MB (imagem)'}.`;
+      wrapper.appendChild(warn);
+    }
+
     const altRow = document.createElement('div');
     altRow.className = 'alt-row';
-    altRow.innerHTML = `<label>ALT para mídia ${index + 1}<input data-alt-index="${index}" type="text" placeholder="Descrição da mídia"></label>`;
+    altRow.innerHTML = `<label>ALT para imagem ${index + 1}<input data-alt-index="${index}" type="text" placeholder="Descrição da imagem"></label>`;
     altEditor.appendChild(altRow);
   });
+});
+
+videoInput.addEventListener('change', () => {
+  const file = (videoInput.files || [])[0];
+  // Não misturar prévia com imagens: só indicar que há vídeo
+  if (!file) return;
+  mediaPreview.innerHTML = '';
+  const url = URL.createObjectURL(file);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'media-item';
+  wrapper.innerHTML = `<video src="${url}" muted playsinline></video>`;
+  mediaPreview.appendChild(wrapper);
+
+  altEditor.innerHTML = '';
+  const altRow = document.createElement('div');
+  altRow.className = 'alt-row';
+  altRow.innerHTML = `<label>ALT para vídeo<input data-alt-index="video" type="text" placeholder="Descrição do vídeo"></label>`;
+  altEditor.appendChild(altRow);
 });
 
 scheduleBtn.addEventListener('click', async () => {
   composerMsg.textContent = '';
   const text = postText.value.trim();
-  const files = Array.from(mediaInput.files || []).slice(0, 4);
-  const alts = Array.from(altEditor.querySelectorAll('input')).map(i => i.value.trim());
+  const imageFiles = Array.from(mediaInput.files || []).slice(0, 4);
+  const videoFile = (videoInput.files || [])[0] || null;
+  const altInputs = Array.from(altEditor.querySelectorAll('input'));
+  const alts = altInputs.map(i => i.value.trim());
   const date = dateInput.value;
   const times = timesInput.value.split(',').map(t => t.trim()).filter(Boolean);
   console.log('⏰ User entered times:', times);
 
-  if (!text && files.length === 0) {
+  if (!text && imageFiles.length === 0 && !videoFile) {
     composerMsg.textContent = 'Escreva um texto ou selecione uma mídia.';
     return;
   }
@@ -124,15 +156,22 @@ scheduleBtn.addEventListener('click', async () => {
     await ensureLoggedIn();
     
     // Para agendamento, enviar dados raw (não fazer upload ainda)
-    const mediaRaw = files.length > 0 ? await Promise.all(files.map(async (file, index) => ({
+    const mediaRawImages = imageFiles.length > 0 ? await Promise.all(imageFiles.map(async (file, index) => ({
       name: file.name,
       type: file.type,
       alt: alts[index] || '',
       dataUrl: await fileToDataUrl(file)
     }))) : [];
+    const mediaRawVideo = videoFile ? [{
+      name: videoFile.name,
+      type: videoFile.type,
+      alt: (altInputs.find(i => i.dataset.altIndex === 'video')?.value || ''),
+      dataUrl: await fileToDataUrl(videoFile)
+    }] : [];
     
-    console.log('📱 Sending for scheduling:', { text: text?.slice(0, 50), mediaCount: mediaRaw.length });
-    await schedulePosts({ text, media: mediaRaw, date, times });
+    const mediaAll = [...mediaRawImages, ...mediaRawVideo];
+    console.log('📱 Sending for scheduling:', { text: text?.slice(0, 50), mediaCount: mediaAll.length });
+    await schedulePosts({ text, media: mediaAll, date, times });
     postText.value = '';
     mediaInput.value = '';
     mediaPreview.innerHTML = '';
@@ -147,15 +186,20 @@ scheduleBtn.addEventListener('click', async () => {
 postNowBtn.addEventListener('click', async () => {
   composerMsg.textContent = '';
   const text = postText.value.trim();
-  const files = Array.from(mediaInput.files || []).slice(0, 4);
-  const alts = Array.from(altEditor.querySelectorAll('input')).map(i => i.value.trim());
-  if (!text && files.length === 0) {
+  const imageFilesNow = Array.from(mediaInput.files || []).slice(0, 4);
+  const videoFileNow = (videoInput.files || [])[0] || null;
+  const altsNow = Array.from(altEditor.querySelectorAll('input')).map(i => i.value.trim());
+  const videoAltInput = document.querySelector('input[data-alt-index="video"]');
+  const videoAltNow = videoAltInput ? videoAltInput.value.trim() : '';
+  if (!text && imageFilesNow.length === 0 && !videoFileNow) {
     composerMsg.textContent = 'Escreva um texto ou selecione uma mídia.';
     return;
   }
   try {
     await ensureLoggedIn();
-    const media = await uploadMediaFiles(files, alts);
+    const mediaImages = await uploadMediaFiles(imageFilesNow, altsNow);
+    const mediaVideo = videoFileNow ? await uploadMediaFiles([videoFileNow], [videoAltNow]) : [];
+    const media = [...mediaImages, ...mediaVideo];
     await postNow({ text, media });
     postText.value = '';
     mediaInput.value = '';

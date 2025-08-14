@@ -439,17 +439,13 @@ async function buildEmbed(media) {
   const images = media.filter(m => m.type.startsWith('image/')).slice(0, 4);
   const videos = media.filter(m => m.type.startsWith('video/')).slice(0, 1);
   
-  // Por enquanto, tratar vídeos como imagens (ainda não há suporte completo a vídeo no Bluesky)
+  // Vídeo nativo: usar app.bsky.embed.video
   if (videos.length > 0) {
-    console.log('⚠️ Vídeo detectado, mas ainda não há suporte completo. Tratando como imagem.');
-    // Para vídeos, vamos tentar usar como imagem por enquanto
-    const allMedia = [...images, ...videos].slice(0, 4);
+    const v = videos[0];
     return {
-      $type: 'app.bsky.embed.images',
-      images: allMedia.map(item => ({ 
-        image: item.blob?.blob || item.blob, 
-        alt: item.alt || (item.type.startsWith('video/') ? 'Vídeo' : '') 
-      }))
+      $type: 'app.bsky.embed.video',
+      video: v.blob?.blob || v.blob,
+      alt: v.alt || ''
     };
   }
   

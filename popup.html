@@ -32,7 +32,12 @@
             <textarea id="post-text" rows="4" placeholder="Escreva seu post..."></textarea>
 
             <div class="media-uploader">
-                <input id="media-input" type="file" accept="image/*,video/*" multiple>
+                <label>Mídias (imagens) — até 4
+                    <input id="media-input" type="file" accept="image/*" multiple>
+                </label>
+                <label>Vídeo — até 1
+                    <input id="video-input" type="file" accept="video/*">
+                </label>
                 <div id="media-preview" class="media-preview"></div>
             </div>
 
